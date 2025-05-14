@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="auth-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
+      <label>
+        <input type="checkbox" id="rememberMe"> Save credentials on this device
+      </label>
+      <button type="button" id="login-button">Login</button>
+      <button type="button" id="signup-button">Sign Up</button>
+    </form>
+    <p id="error-message" style="color: red;"></p>
+  </div>
+  
+
+ <script type="module" src="firebase.js"></script>
+ 
+ <script type="module">
+ 
+// Online login function (আপনি চাইলে এটি ব্যবহার করতে পারেন)
+function onlineLogin(email, password) {
+  // এখানে আপনি Firebase Authentication অথবা অন্য কোনো অনলাইন লগিন পদ্ধতি ব্যবহার করতে পারেন
+  // উদাহরণস্বরূপ:
+  // signInWithEmailAndPassword(auth, email, password)...
+  // তবে এখানে আমরা শুধু online login-এ লোকাল স্টোরেজে তথ্য সেভ করছি
+  localStorage.setItem("user", JSON.stringify({ email, password }));
+  window.location.href = "home.html";
+}
+
+// Offline login function using stored credentials
+function offlineLogin(email, password) {
+  const storedData = localStorage.getItem("user");
+  if (storedData) {
+    const storedUser = JSON.parse(storedData);
+    if (storedUser.email === email && storedUser.password === password) {
+      // যদি credentials মেলে, তাহলে offline login সাকসেসফুল হবে
+      window.location.href = "home.html";
+    } else {
+      document.getElementById("error-message").innerText = "Invalid credentials in offline mode!";
+    }
+  } else {
+    document.getElementById("error-message").innerText = "No stored credentials found!";
+  }
+}
+
+// Event listener for login button
+document.getElementById("login-button").addEventListener("click", function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  
+  if (email === "" || password === "") {
+    document.getElementById("error-message").innerText = "Please enter both email and password!";
+    return;
+  }
+
+  // Check if browser is online
+  if (navigator.onLine) {
+    // Online login: এখানে আপনি Firebase Authentication ব্যবহার করতে পারেন
+    onlineLogin(email, password);
+  } else {
+    // Offline login: লোকাল স্টোরেজের উপর ভিত্তি করে
+    offlineLogin(email, password);
+  }
+});
+
+// 🔹 DOM এলিমেন্ট নির্বাচন
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginButton = document.getElementById("login-button");
+const signupButton = document.getElementById("signup-button");
+const rememberMeCheckbox = document.getElementById("rememberMe");
+const errorMessage = document.getElementById("error-message");
+
+// ✅ আগের লগিন তথ্য (যদি থাকে) লোকাল স্টোরেজ থেকে লোড করুন
+if (localStorage.getItem("rememberMe") === "true") {
+    emailInput.value = localStorage.getItem("email") || "";
+    passwordInput.value = localStorage.getItem("password") || "";
+    rememberMeCheckbox.checked = true;
+}
+
+// 🔥 **লগিন ফাংশন**
+loginButton.addEventListener("click", () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const rememberMe = rememberMeCheckbox.checked;
+
+    if (!email || !password) {
+        errorMessage.textContent = "⚠️ Please enter both email and password!";
+        return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log("✅ Login Successful:", userCredential.user);
+            
+            // ✅ "Remember Me" ফিচার চালু হলে তথ্য সেভ করুন
+            if (rememberMe) {
+                localStorage.setItem("rememberMe", "true");
+                localStorage.setItem("email", email);
+                localStorage.setItem("password", password);
+            } else {
+                localStorage.removeItem("rememberMe");
+                localStorage.removeItem("email");
+                localStorage.removeItem("password");
+            }
+
+            // 🔹 হোম পেজে রিডাইরেক্ট করুন
+            window.location.href = "home.html";
+        })
+        .catch((error) => {
+            console.error("❌ Login Error:", error.message);
+            errorMessage.textContent = "❌ Invalid email or password!";
+        });
+});
+
+// 🔥 **সাইন আপ ফাংশন**
+signupButton.addEventListener("click", () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+        errorMessage.textContent = "⚠️ Please enter email and password to sign up!";
+        return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log("✅ Account Created Successfully:", userCredential.user);
+            alert("🎉 Account Created! Now you can log in.");
+        })
+        .catch((error) => {
+            console.error("❌ Sign Up Error:", error.message);
+            errorMessage.textContent = "❌ Could not create account. Try again!";
+        });
+});
+
+ </script>
+</body>
+</html>
