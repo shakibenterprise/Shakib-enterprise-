@@ -605,15 +605,7 @@ window.renderProductTable = function () {
 
   // ----------------------------------------------------
   // ৯. ইউজার অথেনটিকেশন স্টেট চেক (স্টক পেজে প্রবেশের আগে)
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("User is logged in:", user.uid);
-      window.renderProductTable();
-    } else {
-      console.error("User not logged in. Redirecting to login page.");
-      window.location.href = "login.html";
-    }
-  });
+  
 </script>
 
 
