@@ -48,6 +48,15 @@ document.getElementById("balance-button").addEventListener("click", function () 
     window.location.href = "Balance.html"; // মাসিক হিসাব পেজ
 });
 
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("User is logged in:", user.uid);
+      window.renderProductTable();
+    } else {
+      console.error("User not logged in. Redirecting to login page.");
+      window.location.href = "login.html";
+    }
+  });
 </script>
 </body>
 </html>
