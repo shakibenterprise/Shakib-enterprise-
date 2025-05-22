@@ -473,14 +473,6 @@ window.closeDraftPopup = function () {
 
 // --------------------------------------------------------------------
 // ✅ **Auth State চেক (Offline Support সহ)**
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("User is logged in:", user.uid);
-    } else {
-        console.error("User not logged in. Redirecting to login page.");
-        window.location.href = "index.html";
-    }
-});
 
 </script>
 
