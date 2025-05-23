@@ -305,7 +305,7 @@ body {
     <ul id="draftList"> </ul>
     <button onclick="closeDraftPopup()">বন্ধ করুন</button>
 </div>
-    
+    <script type="module" src="firebase.js"></script>
 <script type="module">
 // ✅ Firebase.js থেকে প্রয়োজনীয় ফাংশন ইমপোর্ট করুন
 import { db, auth, fetchData } from "./firebase.js";
@@ -478,7 +478,7 @@ window.closeDraftPopup = function () {
        console.log("User is logged in:", user.uid);
     } else {
         console.error("User not logged in. Redirecting to login page.");
-        window.location.href = "history.html";
+        window.location.href = "index.html";
     }
 });
 
